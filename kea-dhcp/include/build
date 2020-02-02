@@ -1,0 +1,12 @@
+#!/bin/bash
+set -xe
+wget https://ftp.isc.org/isc/kea/${KEA_VERSION}/kea-${KEA_VERSION}.tar.gz
+tar xvfz kea-${KEA_VERSION}.tar.gz
+rm kea-${KEA_VERSION}.tar.gz
+cd kea-${KEA_VERSION}
+export PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
+export CC="ccache gcc" CXX="ccache g++"
+declare -x PATH="/usr/lib64/ccache:$PATH"
+autoreconf --install
+./configure --prefix /usr/local --with-pgsql --with-openssl
+make -j4
