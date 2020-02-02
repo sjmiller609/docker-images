@@ -7,64 +7,12 @@ executors:
       - image: circleci/python:3
 jobs:
 
-  build-README.md:
-    executor: docker-executor
-    steps:
-      - docker-build:
-          image_name: README.md
-          path: images/README.md
-  publish-latest-README.md:
-    executor: docker-executor
-    steps:
-      - push:
-          image_name: README.md
-          comma_separated_tags: "latest"
-  scan-README.md:
-    executor: clair-scanner/default
-    steps:
-      - clair-scan:
-          image_name: README.md
-  release-README.md:
-    executor: docker-executor
-    steps:
-      - checkout
-      - get-tag:
-          directory: README.md
-      - push:
-          comma_separated_tags: "$TAG,$CIRCLE_BRANCH"
-
-  build-LICENSE:
-    executor: docker-executor
-    steps:
-      - docker-build:
-          image_name: LICENSE
-          path: images/LICENSE
-  publish-latest-LICENSE:
-    executor: docker-executor
-    steps:
-      - push:
-          image_name: LICENSE
-          comma_separated_tags: "latest"
-  scan-LICENSE:
-    executor: clair-scanner/default
-    steps:
-      - clair-scan:
-          image_name: LICENSE
-  release-LICENSE:
-    executor: docker-executor
-    steps:
-      - checkout
-      - get-tag:
-          directory: LICENSE
-      - push:
-          comma_separated_tags: "$TAG,$CIRCLE_BRANCH"
-
   build-kea-dhcp:
     executor: docker-executor
     steps:
       - docker-build:
           image_name: kea-dhcp
-          path: images/kea-dhcp
+          path: kea-dhcp
   publish-latest-kea-dhcp:
     executor: docker-executor
     steps:
@@ -89,54 +37,6 @@ workflows:
   version: 2.1
   build-images:
     jobs:
-
-      - build-README.md
-      - scan-README.md:
-          requires:
-            - build-README.md
-      - publish-latest-README.md:
-          requires:
-            - scan-README.md
-          filters:
-            branches:
-              only: master
-      - approve-release-README.md:
-          type: approval
-          requires:
-            - scan-README.md
-          filters:
-            branches:
-              only: master
-      - release-README.md:
-          requires:
-            - approve-release-README.md
-          filters:
-            branches:
-              only: master
-
-      - build-LICENSE
-      - scan-LICENSE:
-          requires:
-            - build-LICENSE
-      - publish-latest-LICENSE:
-          requires:
-            - scan-LICENSE
-          filters:
-            branches:
-              only: master
-      - approve-release-LICENSE:
-          type: approval
-          requires:
-            - scan-LICENSE
-          filters:
-            branches:
-              only: master
-      - release-LICENSE:
-          requires:
-            - approve-release-LICENSE
-          filters:
-            branches:
-              only: master
 
       - build-kea-dhcp
       - scan-kea-dhcp:
@@ -205,7 +105,7 @@ commands:
           name: Load archived Docker image
           command: docker load -i /tmp/workspace/<< parameters.image_name >>.tar
       - modified-orb:
-          whitelist: "images/<< parameters.image_name >>/cve-whitelist.yaml"
+          whitelist: "<< parameters.image_name >>/cve-whitelist.yaml"
           image: "<< parameters.image_name >>"
   push:
     description: "Push a Docker image to DockerHub"

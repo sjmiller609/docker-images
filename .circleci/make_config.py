@@ -5,7 +5,7 @@ from jinja2 import Template
 
 def listdir_nohidden(path):
     for f in os.listdir(path):
-        if not f.startswith('.'):
+        if not f.startswith('.') and os.path.isdir(os.path.join(path, f)):
             subdir = os.path.join(path, f)
             if f != "base":
                 yield f
