@@ -32,6 +32,7 @@ jobs:
           directory: kea-dhcp
       - push:
           comma_separated_tags: "$TAG,$CIRCLE_BRANCH"
+          image_name: kea-dhcp
 
 workflows:
   version: 2.1
@@ -79,7 +80,8 @@ commands:
         default: $CIRCLE_PROJECT_REPONAME
     steps:
       - checkout
-      - setup_remote_docker
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
           name: Build the Docker image
           command: |

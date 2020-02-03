@@ -30,6 +30,7 @@ jobs:
           directory: {{ image }}
       - push:
           comma_separated_tags: "$TAG,$CIRCLE_BRANCH"
+          image_name: {{ image }}
 {% endfor %}
 workflows:
   version: 2.1
