@@ -9,6 +9,7 @@ jobs:
 
   build-kea-dhcp:
     executor: docker-executor
+    resource_class: large
     steps:
       - docker-build:
           image_name: kea-dhcp
