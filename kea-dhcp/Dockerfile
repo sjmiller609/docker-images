@@ -27,7 +27,7 @@ RUN apt-get update \
   && apt-get install -y libboost-dev libboost-system-dev liblog4cplus-dev libssl-dev postgresql-server-dev-all libpq-dev
 
 # Install extra packages
-RUN apt-get install -y net-tools
+RUN apt-get install -y net-tools netcat
 
 # Ensure linking
 RUN echo "/usr/local/lib/hooks" > /etc/ld.so.conf.d/kea.conf \
