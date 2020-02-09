@@ -24,8 +24,7 @@ COPY --from=build /usr/local /usr/local
 
 # Install runtime dependencies
 RUN apt-get update \
-  && apt-get install -y libboost-dev libboost-system-dev liblog4cplus-dev libssl-dev postgresql-server-dev-all libpq-dev
-
+  && apt-get install -y libboost-dev libboost-system-dev liblog4cplus-dev libssl-dev postgresql-client
 # Install extra packages
 RUN apt-get install -y net-tools netcat
 
