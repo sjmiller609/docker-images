@@ -1,0 +1,9 @@
+#!/bin/bash
+echo "Finding interface..."
+interface=$(route | grep '^default' | grep -o '[^ ]*$')
+echo "Selected interface $interface"
+sed "s/INTERFACE/${interface}/g" /kea-kube-configmap.conf > /active-config.conf
+sed -i "s/DB_USER/${DB_USER}/g" /active-config.conf
+sed -i "s/DB_HOST/${DB_HOST}/g" /active-config.conf
+sed -i "s/DB_PASSWORD/${DB_PASSWORD}/g" /active-config.conf
+cat /active-config.conf | sed --expression="s/${DB_PASSWORD}/********/g"

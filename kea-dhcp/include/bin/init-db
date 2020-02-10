@@ -1,0 +1,7 @@
+#!/bin/bash
+echo "Initializing DB..."
+kea-admin db-init pgsql -h $DB_HOST -u $DB_USER -p $DB_PASSWORD -n kea
+echo "DB initialized."
+echo "Upgrading DB schema to current version..."
+kea-admin db-upgrade pgsql -h $DB_HOST -u $DB_USER -p $DB_PASSWORD -n kea || true
+echo "Done upgrading."
