@@ -17,7 +17,7 @@ RUN chmod +x /build && /build
 COPY include/install /install
 RUN chmod +x /install && /install
 
-FROM ubuntu:18.04 AS server
+FROM krallin/ubuntu-tini:xenial AS server
 
 # Copy installation directory
 COPY --from=build /usr/local /usr/local
