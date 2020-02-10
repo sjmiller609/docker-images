@@ -35,6 +35,34 @@ jobs:
           comma_separated_tags: "$TAG,$CIRCLE_BRANCH"
           image_name: kea-dhcp
 
+  build-helm-build:
+    executor: docker-executor
+    resource_class: large
+    steps:
+      - docker-build:
+          image_name: helm-build
+          path: helm-build
+  publish-latest-helm-build:
+    executor: docker-executor
+    steps:
+      - push:
+          image_name: helm-build
+          comma_separated_tags: "latest"
+  scan-helm-build:
+    executor: clair-scanner/default
+    steps:
+      - clair-scan:
+          image_name: helm-build
+  release-helm-build:
+    executor: docker-executor
+    steps:
+      - checkout
+      - get-tag:
+          directory: helm-build
+      - push:
+          comma_separated_tags: "$TAG,$CIRCLE_BRANCH"
+          image_name: helm-build
+
 workflows:
   version: 2.1
   build-images:
@@ -60,6 +88,30 @@ workflows:
       - release-kea-dhcp:
           requires:
             - approve-release-kea-dhcp
+          filters:
+            branches:
+              only: master
+
+      - build-helm-build
+      - scan-helm-build:
+          requires:
+            - build-helm-build
+      - publish-latest-helm-build:
+          requires:
+            - scan-helm-build
+          filters:
+            branches:
+              only: master
+      - approve-release-helm-build:
+          type: approval
+          requires:
+            - scan-helm-build
+          filters:
+            branches:
+              only: master
+      - release-helm-build:
+          requires:
+            - approve-release-helm-build
           filters:
             branches:
               only: master
